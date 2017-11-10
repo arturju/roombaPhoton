@@ -1,0 +1,35 @@
+# Compiled stuffs
+*.class
+*.exe
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# Eagle backup schematics
+*.s#*
+
+# OS generated files
+.DS_Store?
+.DS_Store
+._*
+.__*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Zip and config files
+.zip
+config.js
+
+# Misc
+schem
+private.txt
