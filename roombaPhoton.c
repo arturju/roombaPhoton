@@ -4,14 +4,14 @@
  **
  ** Description:
  ** Connect's particle photon with Roomba Open Interface commands
-
-Summary of Roomba Open Interface Spec:
-
-3 operating modes: Passive, Safe, and Full
-  -Passive(128): Sleeps after 5 min inactive. Other modes drain battery
-  -Safe(131):    Allows user control but safety condition reverts it to Passive mode
-  -Full(132):    Complete complete, ignores cliff, wheel-drop, charger, etc
--------------------------------------------------------------------*/
+ 
+ Summary of Roomba Open Interface Spec:
+ 
+ 3 operating modes: Passive, Safe, and Full
+ -Passive(128): Sleeps after 5 min inactive. Other modes drain battery
+ -Safe(131):    Allows user control but safety condition reverts it to Passive mode
+ -Full(132):    Complete complete, ignores cliff, wheel-drop, charger, etc
+ -------------------------------------------------------------------*/
 
 /*-----------------------------------------------------------------------------
  ** Includes
@@ -20,7 +20,7 @@ Summary of Roomba Open Interface Spec:
 
 /*-----------------------------------------------------------------------------
  ** Global Defines/Typedefs/Enums/Macros.
- ** 
+ **
  **  pin3Rxd -> White wire -> Photon TX pin
  **  pin4Txd -> Green wire -> Photon RX pin
  **  pin5Brc -> Black Wire -> Photon pin D5
@@ -31,41 +31,41 @@ sensorPacketList sensors = { .chargingState={21,1,false}, .voltage={22,2,false},
 
 unsigned long int roombaIOtimeout = 240000;   // 4 min (actually less? double check)
 unsigned long     roombaTimeMark  = 0;
-int 			  ledPin 		  = D7;
+int               ledPin           = D7;
 int               ledState        = 0;
 int               roombaCmd       = 0;
 String            inSerial        = "";
-const size_t 	  READ_BUF_SIZE   = 64;
-size_t 			  readBufOffset	  = 0;
+const size_t       READ_BUF_SIZE   = 64;
+size_t               readBufOffset      = 0;
 char readBuf[READ_BUF_SIZE];
 
 
 //---------------------Setup()---------------------------------
 void setup() {
-	Serial1.begin(19200);		                // for Roomba communication via RX/TX pins
-	Serial.begin(19200); 		                // for debugging through terminal
-// 	pinMode(roombaDin.pin5Brc, OUTPUT);         // Roomba's BRC pin. Used to wake it up
-	pinMode(D5, OUTPUT);
-	pinMode(ledPin,OUTPUT);                     // use built in led for feedback
-	roombaTimeMark = millis();                  // start timer
-	
-	// set up API connection
-	Spark.function("webCmd",receiveWebCmd);
-	Serial.println("Setup complete");
+    Serial1.begin(19200);                        // for Roomba communication via RX/TX pins
+    Serial.begin(19200);                         // for debugging through terminal
+    //     pinMode(roombaDin.pin5Brc, OUTPUT);         // Roomba's BRC pin. Used to wake it up
+    pinMode(D5, OUTPUT);
+    pinMode(ledPin,OUTPUT);                     // use built in led for feedback
+    roombaTimeMark = millis();                  // start timer
+    
+    // set up API connection
+    Spark.function("webCmd",receiveWebCmd);
+    Serial.println("Setup complete");
 }
 
 //---------------------Spark web cmd()---------------------------------
 int receiveWebCmd(String command){
     Serial.print("Command # "); Serial.print(command); Serial.println(" received from web!");
-	roombaCmd = command.toInt();	
-	return 1;
+    roombaCmd = command.toInt();
+    return 1;
 }
 
 
 /*****************************************************************************************
  *             todo:  Rreading roomba sensor packets
- * - Bug with Serial1.read(). Sometimes reads more than 8 bits...  
- * 
+ * - Bug with Serial1.read(). Sometimes reads more than 8 bits...
+ *
  * ********************************************************************************************/
 //  #define    NO_BYTE_READ 0x100
 //  #define    ROOMBA_READ_TIMEOUT    1000     /* in ms */
@@ -95,29 +95,29 @@ int receiveWebCmd(String command){
 
 // uint16_t getRoombaSensor(sensorPacket oiSensorPacket){              // Needs different routine to read signed integers???
 //     uint16_t    finalByte=0;
-    
+
 //     Serial1.write(142);
 //     Serial1.write(oiSensorPacket.packetID);
 //     Serial.print("Requested roomba sensor ID: ");    Serial.println(oiSensorPacket.packetID);
-    
-        
+
+
 //     Serial.print("Pre-writing to array: "); Serial.print(signedByteArray[0],BIN); Serial.print(" | "); Serial.println(signedByteArray[1],BIN);
-    
+
 //     for(int byteCounter= 0; byteCounter<oiSensorPacket.dataBytes ; byteCounter++){
 //     readByte(signedByteArray[byteCounter], 100);
-//     Serial.print("Byte #");             Serial.print(byteCounter); 
+//     Serial.print("Byte #");             Serial.print(byteCounter);
 //     Serial.print(" | BIN = ");          Serial.print( (signedByteArray[byteCounter] ),BIN);
 //     Serial.print(" | (int8_t) = ");     Serial.println(signedByteArray[byteCounter]);
 //     // todo: clever way to parse two 8bit ints into a 16bit int
 //     }
 //     if(oiSensorPacket.dataBytes == 1)       { finalByte =           signedByteArray[0];}
 //     if(oiSensorPacket.dataBytes == 2)       { finalByte = (uint16_t)signedByteArray[0]<<8 | signedByteArray[1];}
-    
-//     Serial.print("Final value, BIN: "); Serial.print(finalByte, BIN);  Serial.print("(uint16_t) "); Serial.println(finalByte);
-        
 
-//     Serial.print("Post-writing to array: "); Serial.print(signedByteArray[0],BIN); Serial.print(" | "); Serial.println(signedByteArray[1],BIN);  
-    
+//     Serial.print("Final value, BIN: "); Serial.print(finalByte, BIN);  Serial.print("(uint16_t) "); Serial.println(finalByte);
+
+
+//     Serial.print("Post-writing to array: "); Serial.print(signedByteArray[0],BIN); Serial.print(" | "); Serial.println(signedByteArray[1],BIN);
+
 //     return finalByte;
 // }
 
@@ -156,8 +156,8 @@ int receiveWebCmd(String command){
 // }
 
 /*--------------------------------------------------------------------
-End of Sensor reading buggy code
-----------------------------------------------------------------*/
+ End of Sensor reading buggy code
+ ----------------------------------------------------------------*/
 
 
 
@@ -165,66 +165,64 @@ End of Sensor reading buggy code
 
 
 /*---------------------Main Loop()---------------------------------
-- Receive cmds from Serial or API
-- Perform cmd and update state
-- check timers and read Roomba response
-----------------------------------------------------------------*/
+ - Receive cmds from Serial or API
+ - Perform cmd and update state
+ - check timers and read Roomba response
+ ----------------------------------------------------------------*/
 void loop() {
-	/*---------------------Receive cmds from Serial or API---------------------------------*/
-	
-	// Commanding from serial monitor. Ascii to decimal
-	// examples:  "*" -> 128;     "1" -> 135;       "9" -> 143,      "?" -> 149
-	if (Serial.available() > 0 ){
-		roombaCmd = Serial.read()+86;                                           
-		Serial.print("--Cmd from serial(usb): "); Serial.println(roombaCmd);
-		cmdRoomba(roombaCmd);
-	}	
-	// receiveWebCmd happens asynchronously
-	
-	/*---------------------Perform cmd and update state---------------------------------*/
-	if(roombaCmd != 0){
-		Serial.print("--Cmd: "); Serial.println(roombaCmd);
-		digitalWrite(ledPin, ledState);
-		switch(artuRoomba.roombaState){    
-		  case ASLEEP:
-			  artuRoomba.roombaUpdateFunc= &roombaCmdFromSleep;
-			  break;
-		   case CLEANING:
-			  artuRoomba.roombaUpdateFunc = &roombaCmdFromClean;
-			  break;
-		   case DOCKING:
-			  artuRoomba.roombaUpdateFunc = &roombaCmdFromSeek;
-			  break;
-		}
-		artuRoomba.roombaUpdateFunc(&artuRoomba.roombaState, roombaDin, roombaCmd);
-		roombaTimeMark= millis();           // reset sleep timers
-		ledState = !ledState;    			// flip led to signal cmd was received
-		roombaCmd = 0; 						// reset received cmd
-	}// End if(roombaCmd)  	
-	
-	/*--------------------Check timers and read Roomba response---------------------------------*/
-	if(IsTime(&roombaTimeMark, roombaIOtimeout) && artuRoomba.roombaState != ASLEEP  ) {
-		Serial.println("Roomba went to sleep!");  
-		artuRoomba.roombaState=ASLEEP;
-		ledState = 0;
-		digitalWrite(ledPin, ledState);
-	}
-	
-	/*----- todo: implement reading sensor packets to update roomba's state  ---*/
-	
-	
-	// sample serial received msgs that are not sensor packets. 
-	while(Serial1.available()) {
-		if (readBufOffset < READ_BUF_SIZE) {
-			char c = Serial1.read();
-			if (c != '\n') readBuf[readBufOffset++] = c;
-			else {
-				readBuf[readBufOffset] = 0;
-				Serial.printlnf("Received from serial: %s", readBuf);
-				readBufOffset = 0;
-			}
-		}
-		else {			readBufOffset = 0;		}		// empty buffer; overflow
-	}
-	
+    /*---------------------Receive cmds from Serial or API---------------------------------*/
+    
+    // Commanding from serial monitor. Ascii to decimal
+    // examples:  "*" -> 128;     "1" -> 135;       "9" -> 143,      "?" -> 149
+    if (Serial.available() > 0 ){
+        roombaCmd = Serial.read()+86;
+        Serial.print("--Cmd from serial(usb): "); Serial.println(roombaCmd);
+        cmdRoomba(roombaCmd);
+    }
+    // receiveWebCmd happens asynchronously
+    
+    /*---------------------Perform cmd and update state---------------------------------*/
+    if(roombaCmd != 0){
+        Serial.print("--Cmd: "); Serial.println(roombaCmd);
+        digitalWrite(ledPin, ledState);
+        switch(artuRoomba.roombaState){
+            case ASLEEP:
+                artuRoomba.roombaUpdateFunc= &roombaCmdFromSleep;
+                break;
+            case CLEANING:
+                artuRoomba.roombaUpdateFunc = &roombaCmdFromClean;
+                break;
+            case DOCKING:
+                artuRoomba.roombaUpdateFunc = &roombaCmdFromSeek;
+                break;
+        }
+        artuRoomba.roombaUpdateFunc(&artuRoomba.roombaState, roombaDin, roombaCmd);
+        roombaTimeMark= millis();           // reset sleep timers
+        ledState = !ledState;                // flip led to signal cmd was received
+        roombaCmd = 0;                         // reset received cmd
+    }// End if(roombaCmd)
+    
+    /*--------------------Check timers and read Roomba response---------------------------------*/
+    if(IsTime(&roombaTimeMark, roombaIOtimeout) && artuRoomba.roombaState != ASLEEP  ) {
+        Serial.println("Roomba went to sleep!");
+        artuRoomba.roombaState=ASLEEP;
+    }
+    
+    /*----- todo: implement reading sensor packets to update roomba's state  ---*/
+    
+    
+    // sample serial received msgs that are not sensor packets.
+    while(Serial1.available()) {
+        if (readBufOffset < READ_BUF_SIZE) {
+            char c = Serial1.read();
+            if (c != '\n') readBuf[readBufOffset++] = c;
+            else {
+                readBuf[readBufOffset] = 0;
+                Serial.printlnf("Received from serial: %s", readBuf);
+                readBufOffset = 0;
+            }
+        }
+        else {            readBufOffset = 0;        }        // empty buffer; overflow
+    }
+    
 }
